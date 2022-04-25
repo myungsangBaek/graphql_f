@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import Movie from "../components/Movie";
 import styled from "styled-components";
@@ -8,12 +8,12 @@ const GET_MOVIES = gql`
     movies {
       id
       medium_cover_image
+      isLiked @client
     }
   }
 `;
 const Home = () => {
   const { loading, error, data } = useQuery(GET_MOVIES);
-  console.log(data);
 
   return (
     <Container>
@@ -21,11 +21,17 @@ const Home = () => {
         <Title>GraphQL</Title>
         <Subtitle></Subtitle>
       </Header>
-      {loading && <Loading>Loading...</Loading>}
-      {!loading && data.movies && (
+      {loading ? (
+        <Loading>Loading...</Loading>
+      ) : (
         <Movies>
-          {data.movies.map((m) => (
-            <Movie key={m.id} id={m.id} bg={m.medium_cover_image} />
+          {data?.movies?.map((m) => (
+            <Movie
+              key={m.id}
+              id={m.id}
+              isLiked={m.isLiked}
+              bg={m.medium_cover_image}
+            />
           ))}
         </Movies>
       )}
